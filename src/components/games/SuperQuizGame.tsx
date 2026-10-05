@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Trophy, RotateCcw, Target, Brain, Zap, Award, Star, Clock } from 'lucide-react';
+import { Check, X, Trophy, RotateCcw, Target, Brain, Zap, Award, Star, Clock, Calculator, BookOpen, Flag, Globe, Music, FlaskConical, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
