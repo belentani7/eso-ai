@@ -16,3 +16,7 @@ venv/
 *.log
 .DS_Store
 Thumbs.db
+
+# Artefactos de build que no deben versionarse
+*.tsbuildinfo
+__payload_progress.json
