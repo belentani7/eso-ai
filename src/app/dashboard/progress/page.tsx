@@ -19,7 +19,7 @@ import { GAMES } from '@/data';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { 
-  BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area 
+  Bar, BarChart, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area 
 } from 'recharts';
 
 export default function ProgressPage() {
