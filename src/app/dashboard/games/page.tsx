@@ -11,6 +11,7 @@ import { useAppStore } from '../../../lib/store';
 import { cn, getXpProgress, calculateLevel } from '../../../lib/utils';
 import { motion } from 'framer-motion';
 import { ACHIEVEMENTS } from '../../../data';
+const GT = '>';
 
 export default function GamesPage() {
   const { progress } = useAppStore();
@@ -201,7 +202,7 @@ export default function GamesPage() {
               </div>
               <div className="p-3 rounded-xl bg-green-50 dark:bg-green-900/20">
                 <p className="font-medium text-green-700 dark:text-green-300">Trilingue</p>
-                <p className="text-muted-foreground">Construye rachas. +5 XP por racha > 1.</p>
+                <p className="text-muted-foreground">Construye rachas. +5 XP por racha {GT} 1.</p>
               </div>
               <div className="p-3 rounded-xl bg-yellow-50 dark:bg-yellow-900/20">
                 <p className="font-medium text-yellow-700 dark:text-yellow-300">Super Quiz</p>
