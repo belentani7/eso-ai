@@ -8,7 +8,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAppStore } from '@/lib/store';
-import { generateId, cn, MATH_VOCABULARY, VocabularyItem } from '@/lib/utils';
+import { generateId, cn, MATH_VOCABULARY } from '@/lib/utils';
+import type { VocabularyItem } from '@/data';
 
 interface Equation {
   text: string;

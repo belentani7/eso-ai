@@ -30,7 +30,7 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
             return React.cloneElement(child, { currentTab, onTabChange: handleTabChange });
           }
           
-          if (child.type === TabsContent) {
+          if (child.type === TabContent) {
             return React.cloneElement(child, { currentTab });
           }
           
@@ -63,7 +63,7 @@ const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
           const tabValue = child.props.value as string;
           return React.cloneElement(child, {
             isActive: currentTab === tabValue,
-            onClick: () => onTabChange(tabValue),
+            onClick: () => onTabChange?.(tabValue),
           });
         }
         return child;

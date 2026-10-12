@@ -15,7 +15,7 @@ import { Tabs, TabsList, TabTrigger, TabContent } from '@/components/ui/tabs';
 import { Avatar } from '@/components/ui/avatar';
 import { useAppStore } from '@/lib/store';
 import { ACHIEVEMENTS, calculateLevel, getXpProgress, xpForNextLevel } from '@/lib/utils';
-import { GAMES } from '@/data';
+import { GAMES, MATH_VOCABULARY, SCIENCE_VOCABULARY, SCHOOL_VOCABULARY, FALSE_FRIENDS } from '@/data';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { 
@@ -542,7 +542,7 @@ export default function ProgressPage() {
 }
 
 function StatCard({ icon: Icon, value, label, color, trend }: { 
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   value: string | number;
   label: string;
   color: string;

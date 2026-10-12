@@ -36,7 +36,9 @@ export default function MusicPage() {
     duration: 0,
     volume: 0.7,
   });
-  const [lyricsView, setLyricsView] = useState<'all' | 'target' | 'comparison'>('comparison');
+  // Idioma seleccionado en el modo Karaoke (antes reutilizaba por error el
+  // estado de vista de letra 'all'|'target'|'comparison').
+  const [karaokeLang, setKaraokeLang] = useState<string>('es');
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout>();
 
@@ -302,8 +304,8 @@ export default function MusicPage() {
                       <Button 
                         key={lang.code}
                         variant="outline"
-                        className={cn('flex flex-col items-center gap-2', lyricsView === lang.code && 'bg-primary-500 text-white border-primary-500')}
-                        onClick={() => setLyricsView(lang.code as any)}
+                        className={cn('flex flex-col items-center gap-2', karaokeLang === lang.code && 'bg-primary-500 text-white border-primary-500')}
+                        onClick={() => setKaraokeLang(lang.code)}
                         style={{ borderColor: `${lang.color}60` }}
                       >
                         <span className="text-2xl">{lang.flag}</span>
@@ -502,7 +504,7 @@ export default function MusicPage() {
 }
 
 function StatCard({ icon: Icon, value, label, color }: { 
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   value: string | number;
   label: string;
   color: string;

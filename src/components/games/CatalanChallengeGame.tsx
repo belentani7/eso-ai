@@ -8,7 +8,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAppStore } from '@/lib/store';
-import { CATALAN_ADVANTAGES, CatalanAdvantage, shuffleArray, generateId, cn, LANGUAGES } from '@/lib/utils';
+import { CATALAN_ADVANTAGES, shuffleArray, generateId, cn, LANGUAGES } from '@/lib/utils';
+import type { CatalanAdvantage } from '@/data';
 
 const CATALAN_WORDS = [
   { ca: 'Bon dia', es: 'Buenos días', pt: 'Bom dia', en: 'Good morning', type: 'Saludo' },

@@ -11,7 +11,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsList, TabTrigger, TabContent } from '@/components/ui/tabs';
 import { useAppStore } from '@/lib/store';
 import { useSpeechRecognition, useSpeechSynthesis } from '@/hooks';
-import { ChatMessage, SYSTEM_PROMPT, LANGUAGES, VocabularyItem, FalseFriend } from '@/data';
+import { ChatMessage, SYSTEM_PROMPT, LANGUAGES, VocabularyItem, FalseFriend, FALSE_FRIENDS, MATH_VOCABULARY, SCHOOL_VOCABULARY } from '@/data';
 import { getLanguageFlag, getLanguageColor, cn, generateId } from '@/lib/utils';
 
 interface ChatMessageDisplayProps {

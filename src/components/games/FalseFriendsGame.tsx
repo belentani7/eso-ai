@@ -9,7 +9,8 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Avatar } from '@/components/ui/avatar';
 import { useAppStore } from '@/lib/store';
-import { FALSE_FRIENDS, FalseFriend, getLanguageColor, getLanguageFlag, shuffleArray, generateId, cn } from '@/lib/utils';
+import { FALSE_FRIENDS, getLanguageColor, getLanguageFlag, shuffleArray, generateId, cn } from '@/lib/utils';
+import type { FalseFriend } from '@/data';
 
 interface FalseFriendsGameProps {
   onComplete: (won: boolean, score: number) => void;

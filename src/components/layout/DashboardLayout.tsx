@@ -24,8 +24,8 @@ const navigation = [
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { progress, userName, xp, level, streak } = useAppStore();
-  const { current: xpProgress } = getXpProgress(progress.xp);
+  const { progress, userName } = useAppStore();
+  const xpProgress = getXpProgress(progress.xp);
   const currentLevel = calculateLevel(progress.xp);
 
   return (
@@ -72,7 +72,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     Nivel {currentLevel}
                   </Badge>
                   <Badge variant="secondary" className="text-xs">
-                    {streak}🔥
+                    {progress.streak}🔥
                   </Badge>
                 </div>
               </div>

@@ -494,6 +494,3 @@ export function SuperQuizGame({ onComplete }: SuperQuizGameProps) {
     </div>
   );
 }
-
-// Import missing icons
-import { BookOpen, Globe, Music, FlaskConical, GraduationCap } from 'lucide-react';

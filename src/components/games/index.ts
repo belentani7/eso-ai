@@ -1,8 +1,10 @@
-export { FalseFriendsGame } from './FalseFriendsGame';
-export { MateEscapeGame } from './MateEscapeGame';
-export { TrilingueExpressGame } from './TrilingueExpressGame';
-export { CatalanChallengeGame } from './CatalanChallengeGame';
-export { SuperQuizGame } from './SuperQuizGame';
+import { FalseFriendsGame } from './FalseFriendsGame';
+import { MateEscapeGame } from './MateEscapeGame';
+import { TrilingueExpressGame } from './TrilingueExpressGame';
+import { CatalanChallengeGame } from './CatalanChallengeGame';
+import { SuperQuizGame } from './SuperQuizGame';
+
+export { FalseFriendsGame, MateEscapeGame, TrilingueExpressGame, CatalanChallengeGame, SuperQuizGame };
 
 import { GAMES, GameType } from '@/data';
 

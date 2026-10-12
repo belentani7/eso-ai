@@ -4,23 +4,50 @@ import { useCallback, useRef, useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
 import { getSpeechLangCode, speakText, stopSpeaking } from '@/lib/utils';
 
+
+// La lib DOM de este proyecto no declara SpeechRecognition: definimos el minimo necesario.
+interface SpeechRecognitionResultLike {
+  isFinal: boolean;
+  [index: number]: { transcript: string };
+}
+interface SpeechRecognitionEventLike {
+  resultIndex: number;
+  results: { length: number; [index: number]: SpeechRecognitionResultLike };
+  error: string;
+}
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  maxAlternatives: number;
+  onstart: (() => void) | null;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: SpeechRecognitionEventLike) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
+
 export function useSpeechRecognition() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const { currentLanguage, setListening } = useAppStore();
 
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    const win = window as typeof window & {
+      SpeechRecognition?: SpeechRecognitionCtor;
+      webkitSpeechRecognition?: SpeechRecognitionCtor;
+    };
+    const RecognitionCtor = win.SpeechRecognition || win.webkitSpeechRecognition;
+    if (!RecognitionCtor) {
       setError('Reconocimiento de voz no soportado en este navegador');
       return;
     }
-
-    const SpeechRecognition = (window as typeof window & { SpeechRecognition: typeof SpeechRecognition; webkitSpeechRecognition: typeof SpeechRecognition }).SpeechRecognition || (window as typeof window & { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition;
-    recognitionRef.current = new SpeechRecognition();
-    
-    const recognition = recognitionRef.current;
+    const recognition = new RecognitionCtor();
+    recognitionRef.current = recognition;
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = getSpeechLangCode(currentLanguage);

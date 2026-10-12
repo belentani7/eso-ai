@@ -10,15 +10,14 @@ import {
   MATH_VOCABULARY, 
   SCIENCE_VOCABULARY, 
   SCHOOL_VOCABULARY, 
-  FALSE_FRIENDS,
-  VocabularyItem, 
   shuffleArray, 
   generateId, 
   cn, 
   LANGUAGES 
 } from '@/lib/utils';
+import type { VocabularyItem } from '@/data';
 
-const VOCABULARY = [...MATH_VOCABULARY, ...SCIENCE_VOCABULARY, ...SCHOOL_VOCABULARY, ...FALSE_FRIENDS];
+const VOCABULARY = [...MATH_VOCABULARY, ...SCIENCE_VOCABULARY, ...SCHOOL_VOCABULARY];
 
 interface TrilingueExpressGameProps {
   onComplete: (won: boolean, score: number) => void;

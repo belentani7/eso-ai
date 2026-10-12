@@ -214,7 +214,7 @@ export default function CurriculumPage() {
                         size="md" 
                         variant="default" 
                         className="w-48"
-                        style={{ '--progress-color': 'white' }}
+                        style={{ '--progress-color': 'white' } as React.CSSProperties}
                       />
                     </div>
                     <div className="text-right">

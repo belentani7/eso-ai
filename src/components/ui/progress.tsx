@@ -7,7 +7,7 @@ interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
   max?: number;
   showLabel?: boolean;
-  variant?: 'default' | 'success' | 'warning' | 'danger';
+  variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -17,6 +17,8 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
     
     const variantColors = {
       default: 'bg-primary-600',
+      primary: 'bg-primary-600',
+      secondary: 'bg-secondary-600',
       success: 'bg-success-600',
       warning: 'bg-warning-500',
       danger: 'bg-red-600',
