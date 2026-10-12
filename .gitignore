@@ -20,3 +20,9 @@ Thumbs.db
 # Artefactos de build que no deben versionarse
 *.tsbuildinfo
 __payload_progress.json
+
+# El proyecto usa npm (es lo que corre el CI). Estos los dejo una instalacion
+# accidental de pnpm y tenerlos rastreados convivia a los dos gestores en el
+# mismo node_modules, lo que rompia el build local.
+pnpm-lock.yaml
+pnpm-workspace.yaml
