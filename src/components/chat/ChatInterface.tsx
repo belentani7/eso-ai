@@ -34,8 +34,8 @@ export function ChatMessageDisplay({ message, onPlayAudio, onCopy }: ChatMessage
     >
       <Avatar
         size="md"
-        fallback={isUser ? 'W' : 'D'}
-        alt={isUser ? 'William' : 'DANI'}
+        fallback={isUser ? 'E' : 'D'}
+        alt={isUser ? 'Estudiante' : 'DANI'}
         className={cn('flex-shrink-0 mt-1', isUser ? 'bg-gradient-to-br from-blue-500 to-cyan-500' : 'bg-gradient-to-br from-primary-500 to-secondary-500')}
       />
       
