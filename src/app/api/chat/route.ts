@@ -1,21 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SYSTEM_PROMPT, LANGUAGES, FALSE_FRIENDS, MATH_VOCABULARY, CATALAN_ADVANTAGES } from '@/data';
+import { parseChatPayload } from '@/lib/chat-payload.mjs';
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, language = 'es', history = [], userProfile } = await request.json();
-    
-    if (!message?.trim()) {
-      return NextResponse.json({ error: 'Mensaje vacío' }, { status: 400 });
+    // Read a bounded payload; Content-Length alone cannot be trusted.
+    const raw = await request.text();
+    if (new TextEncoder().encode(raw).byteLength > 16384) {
+      return NextResponse.json({ error: 'Solicitud demasiado grande' }, { status: 413 });
     }
-
-    // In production, this would call OpenAI/Claude API
-    // For now, we simulate an intelligent response
-    const response = generateAIResponse(message, language, history);
-    
-    return NextResponse.json(response);
-  } catch (error) {
-    console.error('Chat API error:', error);
+    let payload: unknown;
+    try {
+      payload = JSON.parse(raw);
+    } catch {
+      return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
+    }
+    let parsed;
+    try {
+      parsed = parseChatPayload(payload);
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Solicitud inválida' },
+        { status: 400 }
+      );
+    }
+    const response = generateAIResponse(parsed.message, parsed.language, parsed.history);
+    return NextResponse.json({ ...response, mode: 'guided-rules' }, {
+      headers: { 'Cache-Control': 'no-store' }
+    });
+  } catch {
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
