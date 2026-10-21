@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Belentani Labs' }],
   openGraph: {
     title: 'DANI - Tu Amigo de Estudio',
-    description: 'IA educativa personalizada para William',
+    description: 'Práctica educativa multilingüe guiada por reglas',
     type: 'website',
   },
 };
