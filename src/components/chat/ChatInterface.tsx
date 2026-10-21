@@ -246,7 +246,7 @@ export function ChatInterface({ onVocabularyLearned }: ChatInterfaceProps) {
     // Greeting
     if (lower.includes('hola') || lower.includes('oi') || lower.includes('hello') || lower.includes('buenos') || lower.includes('bon dia')) {
       return {
-        text: `¡Hola William! 👋 ¿Qué tal? Hoy podemos:\n\n1️⃣ Resolver ecuaciones paso a paso\n2️⃣ Practicar catalán (tu portugués ayuda mucho)\n3️⃣ Detectar falsos amigos ⚠️\n4️⃣ Repasar vocabulario del insti\n5️⃣ Hablar de cultura Brasil-España 🌉\n\n¿Por dónde empezamos?`,
+        text: `¡Hola! 👋 ¿Qué tal? Hoy podemos:\n\n1️⃣ Resolver ecuaciones paso a paso\n2️⃣ Practicar catalán (tu portugués ayuda mucho)\n3️⃣ Detectar falsos amigos ⚠️\n4️⃣ Repasar vocabulario del insti\n5️⃣ Hablar de cultura Brasil-España 🌉\n\n¿Por dónde empezamos?`,
         metadata: { topic: 'greeting' }
       };
     }
