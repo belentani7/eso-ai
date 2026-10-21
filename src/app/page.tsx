@@ -63,7 +63,7 @@ export default function HomePage() {
             <div className="hidden md:flex items-center gap-8">
               <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Características</Link>
               <Link href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Cómo funciona</Link>
-              <Link href="#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Testimonios</Link>
+              <Link href="/dashboard/games" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Juegos</Link>
             </div>
             <div className="flex items-center gap-4">
               <Link href="/dashboard/chat" className="btn-primary">
