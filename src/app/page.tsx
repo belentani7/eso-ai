@@ -179,7 +179,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <div key={feature.title} className="card group animate-on-scroll" style={{ animationDelay: `${index * 100}ms` }}>
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br {feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
@@ -234,7 +234,7 @@ export default function HomePage() {
               { icon: Zap, title: 'Gamificación', topics: ['5 juegos educativos', 'Puntos y rachas', 'Logros desbloqueables', 'Progreso visual'], color: 'from-cyan-500 to-cyan-600' },
             ].map((subject, index) => (
               <div key={subject.title} className="card group animate-on-scroll" style={{ animationDelay: `${index * 50}ms` }}>
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br {subject.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${subject.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                   <subject.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-bold mb-3">{subject.title}</h3>
