@@ -3,19 +3,31 @@ import { SYSTEM_PROMPT, LANGUAGES, FALSE_FRIENDS, MATH_VOCABULARY, CATALAN_ADVAN
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, language = 'es', history = [], userProfile } = await request.json();
-    
-    if (!message?.trim()) {
-      return NextResponse.json({ error: 'Mensaje vacío' }, { status: 400 });
+    const raw: unknown = await request.json();
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+      return NextResponse.json({ error: 'Solicitud inválida' }, { status: 400 });
+    }
+    const { message, language = 'es', history = [] } = raw as {
+      message?: unknown; language?: unknown; history?: unknown;
+    };
+    if (typeof message !== 'string' || !message.trim() || message.length > 2000) {
+      return NextResponse.json({ error: 'Mensaje requerido (máximo 2000 caracteres)' }, { status: 400 });
+    }
+    if (typeof language !== 'string' || !['es', 'ca', 'en', 'pt'].includes(language)) {
+      return NextResponse.json({ error: 'Idioma no soportado' }, { status: 400 });
+    }
+    if (!Array.isArray(history) || history.length > 20) {
+      return NextResponse.json({ error: 'Historial inválido (máximo 20 mensajes)' }, { status: 400 });
     }
 
-    // In production, this would call OpenAI/Claude API
-    // For now, we simulate an intelligent response
+    // Motor de respuestas guiadas local: NO invoca un LLM ni guarda mensajes.
     const response = generateAIResponse(message, language, history);
-    
-    return NextResponse.json(response);
+    return NextResponse.json({ ...response, engine: 'guided-rules', persisted: false });
   } catch (error) {
-    console.error('Chat API error:', error);
+    if (error instanceof SyntaxError) {
+      return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
+    }
+    console.error('Chat API error');
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
@@ -162,10 +174,10 @@ function generateEnglishResponse(language: string) {
 
 function generateGreetingResponse(language: string) {
   const responses = {
-    es: `¡Hola William! 👋 ¿Qué tal? Soy DANI, tu amigo de estudio.\n\nHoy podemos:\n1️⃣ **Resolver ecuaciones** paso a paso (te guío, no te doy la respuesta)\n2️⃣ **Practicar catalán** (tu portugués ayuda mucho 🇧🇷→🏴)\n3️⃣ **Detectar falsos amigos** ⚠️ (evita situaciones embarazosas)\n4️⃣ **Repasar vocabulario** del insti (mates, ciencias, escolar)\n5️⃣ **Hablar de cultura** Brasil-España 🌉 (Tordesillas, familia real, fútbol, música)\n6️⃣ **Analizar canciones** en 4 idiomas 🎵\n\n¿Por dónde empezamos?`,
-    ca: `Hola William! 👋 Què tal? Sóc DANI, el teu amic d'estudi.\n\nAvui podem:\n1️⃣ **Resoldre equacions** pas a pas (te guio, no et dono la resposta)\n2️⃣ **Practicar català** (el teu portuguès ajuda molt 🇧🇷→🏴)\n3️⃣ **Detectar falsos amics** ⚠️ (evita situacions embarassoses)\n4️⃣ **Repassar vocabulari** de l'insti (mates, ciències, escolar)\n5️⃣ **Parlar de cultura** Brasil-Espanya 🌉\n6️⃣ **Analitzar cançons** en 4 idiomes 🎵\n\nPer on comencem?`,
-    en: `Hi William! 👋 How are you? I'm DANI, your study buddy.\n\nToday we can:\n1️⃣ **Solve equations** step by step (I guide, don't give answers)\n2️⃣ **Practice Catalan** (your Portuguese helps a lot 🇧🇷→🏴)\n3️⃣ **Spot false friends** ⚠️ (avoid embarrassing situations)\n4️⃣ **Review school vocab** (math, science, daily)\n5️⃣ **Talk culture** Brazil-Spain 🌉 (Tordesillas, royal family, football, music)\n6️⃣ **Analyze songs** in 4 languages 🎵\n\nWhere do we start?`,
-    pt: `Oi William! 👋 Tudo bem? Sou o DANI, seu amigo de estudo.\n\nHoje podemos:\n1️⃣ **Resolver equações** passo a passo (te guio, não dou a resposta)\n2️⃣ **Praticar catalão** (seu português ajuda muito 🇧🇷→🏴)\n3️⃣ **Detectar falsos amigos** ⚠️ (evita situações embaraçosas)\n4️⃣ **Revisar vocabulário** da escola (matemática, ciências, escolar)\n5️⃣ **Falar de cultura** Brasil-Espanha 🌉\n6️⃣ **Analisar músicas** em 4 idiomas 🎵\n\nPor onde começamos?`,
+    es: `¡Hola! 👋 ¿Qué tal? Soy DANI, tu amigo de estudio.\n\nHoy podemos:\n1️⃣ **Resolver ecuaciones** paso a paso (te guío, no te doy la respuesta)\n2️⃣ **Practicar catalán** (tu portugués ayuda mucho 🇧🇷→🏴)\n3️⃣ **Detectar falsos amigos** ⚠️ (evita situaciones embarazosas)\n4️⃣ **Repasar vocabulario** del insti (mates, ciencias, escolar)\n5️⃣ **Hablar de cultura** Brasil-España 🌉 (Tordesillas, familia real, fútbol, música)\n6️⃣ **Analizar canciones** en 4 idiomas 🎵\n\n¿Por dónde empezamos?`,
+    ca: `Hola! 👋 Què tal? Sóc DANI, el teu amic d'estudi.\n\nAvui podem:\n1️⃣ **Resoldre equacions** pas a pas (te guio, no et dono la resposta)\n2️⃣ **Practicar català** (el teu portuguès ajuda molt 🇧🇷→🏴)\n3️⃣ **Detectar falsos amics** ⚠️ (evita situacions embarassoses)\n4️⃣ **Repassar vocabulari** de l'insti (mates, ciències, escolar)\n5️⃣ **Parlar de cultura** Brasil-Espanya 🌉\n6️⃣ **Analitzar cançons** en 4 idiomes 🎵\n\nPer on comencem?`,
+    en: `Hi! 👋 How are you? I'm DANI, your study buddy.\n\nToday we can:\n1️⃣ **Solve equations** step by step (I guide, don't give answers)\n2️⃣ **Practice Catalan** (your Portuguese helps a lot 🇧🇷→🏴)\n3️⃣ **Spot false friends** ⚠️ (avoid embarrassing situations)\n4️⃣ **Review school vocab** (math, science, daily)\n5️⃣ **Talk culture** Brazil-Spain 🌉 (Tordesillas, royal family, football, music)\n6️⃣ **Analyze songs** in 4 languages 🎵\n\nWhere do we start?`,
+    pt: `Oi! 👋 Tudo bem? Sou o DANI, seu amigo de estudo.\n\nHoje podemos:\n1️⃣ **Resolver equações** passo a passo (te guio, não dou a resposta)\n2️⃣ **Praticar catalão** (seu português ajuda muito 🇧🇷→🏴)\n3️⃣ **Detectar falsos amigos** ⚠️ (evita situações embaraçosas)\n4️⃣ **Revisar vocabulário** da escola (matemática, ciências, escolar)\n5️⃣ **Falar de cultura** Brasil-Espanha 🌉\n6️⃣ **Analisar músicas** em 4 idiomas 🎵\n\nPor onde começamos?`,
   };
   
   return {
