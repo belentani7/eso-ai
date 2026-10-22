@@ -35,3 +35,5 @@ npm run typecheck
 npm test
 npm run build
 ```
+
+La API de progreso incluye las marcas `demo: true` y `persisted: false`; reconoce acciones sin guardarlas en servidor. La página `/privacy` explica el comportamiento actual de forma accesible desde la portada. Cualquier despliegue para estudiantes requiere revisar las rutas de voz y almacenamiento local antes de habilitar tráfico real.

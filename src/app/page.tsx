@@ -270,7 +270,7 @@ export default function HomePage() {
                   Ver Juegos
                 </Link>
               </div>
-              <p className="mt-6 text-sm text-muted-foreground">No requiere tarjeta de crédito · Cancela cuando quieras · Datos en tu dispositivo</p>
+              <p className="mt-6 text-sm text-muted-foreground">Prototipo educativo · Sin pagos · Progreso del servidor de demostración</p>
             </div>
           </div>
         </div>
@@ -320,9 +320,9 @@ export default function HomePage() {
           <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
             <p>© 2026 Belentani Labs. Recursos de estudio para jóvenes y personas plurilingües.</p>
             <div className="flex items-center gap-6">
-              <a href="#" className="hover:text-foreground transition-colors">Privacidad</a>
-              <a href="#" className="hover:text-foreground transition-colors">Términos</a>
-              <a href="#" className="hover:text-foreground transition-colors">Contacto</a>
+              <Link href="/privacy" className="hover:text-foreground transition-colors">Privacidad</Link>
+              <span>Versión de demostración</span>
+              <span>Sin cuentas de servidor</span>
             </div>
           </div>
         </div>
