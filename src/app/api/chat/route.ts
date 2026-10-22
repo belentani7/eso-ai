@@ -3,9 +3,22 @@ import { SYSTEM_PROMPT, LANGUAGES, FALSE_FRIENDS, MATH_VOCABULARY, CATALAN_ADVAN
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, language = 'es', history = [], userProfile } = await request.json();
+    const payload: unknown = await request.json();
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      return NextResponse.json({ error: 'Se requiere un objeto JSON' }, { status: 400 });
+    }
+    const { message, language = 'es', history = [] } = payload as Record<string, unknown>;
+    if (typeof message !== 'string' || !message.trim() || message.length > 4000) {
+      return NextResponse.json({ error: 'Mensaje obligatorio (máximo 4000 caracteres)' }, { status: 400 });
+    }
+    if (typeof language !== 'string' || !['es', 'pt', 'ca', 'en'].includes(language)) {
+      return NextResponse.json({ error: 'Idioma no soportado' }, { status: 400 });
+    }
+    if (!Array.isArray(history) || history.length > 30 || history.some(item => !item || typeof item !== 'object')) {
+      return NextResponse.json({ error: 'Historial inválido o demasiado largo' }, { status: 400 });
+    }
     
-    if (!message?.trim()) {
+    if (!message.trim()) {
       return NextResponse.json({ error: 'Mensaje vacío' }, { status: 400 });
     }
 
