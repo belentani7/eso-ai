@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SYSTEM_PROMPT, LANGUAGES, FALSE_FRIENDS, MATH_VOCABULARY, CATALAN_ADVANTAGES } from '@/data';
 import { parseChatPayload } from '@/lib/chat-payload.mjs';
+import { solveLinearEquation } from '@/lib/linear-equation.mjs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +39,7 @@ function generateAIResponse(userMessage: string, language: string, history: any[
   const langInfo = LANGUAGES.find(l => l.code === language) || LANGUAGES[1];
   
   // Math detection
-  if (lower.includes('ecuación') || lower.includes('resuelve') || lower.match(/\d+x\s*[+-]/) || lower.includes('matemática') || lower.includes('mate')) {
+  if (lower.includes('ecuación') || lower.includes('resuelve') || lower.match(/\d+x\s*[+-]/) || /\bx\s*[+-]\s*\d+\s*=/.test(lower) || lower.includes('matemática') || lower.includes('mate')) {
     return generateMathResponse(userMessage, language);
   }
   
@@ -77,39 +78,23 @@ function generateMathResponse(message: string, language: string) {
     { concept: 'Incógnita', pt: 'Incógnita', es: 'Incógnita', ca: 'Incògnita', en: 'Unknown', category: 'Álgebra' },
   ];
   
-  // Check for specific equation
-  const eqMatch = message.match(/(\d*)\s*x\s*([+-])\s*(\d+)\s*=\s*(\d+)/);
-  if (eqMatch) {
-    const [, a, op, b, c] = eqMatch;
-    const aNum = a ? parseInt(a) : 1;
-    const bNum = parseInt(b);
-    const cNum = parseInt(c);
-    
-    let solution: number;
-    let steps: string[];
-    
-    if (op === '+') {
-      solution = (cNum - bNum) / aNum;
-      steps = [
-        `Tenemos ${aNum}x + ${bNum} = ${cNum}`,
-        `Paso 1: Restamos ${bNum} a ambos lados → ${aNum}x = ${cNum - bNum}`,
-        `Paso 2: Dividimos por ${aNum} → x = ${solution}`,
-      ];
-    } else {
-      solution = (cNum + bNum) / aNum;
-      steps = [
-        `Tenemos ${aNum}x - ${bNum} = ${cNum}`,
-        `Paso 1: Sumamos ${bNum} a ambos lados → ${aNum}x = ${cNum + bNum}`,
-        `Paso 2: Dividimos por ${aNum} → x = ${solution}`,
-      ];
-    }
-    
+  // Only explain equations supported by the bounded deterministic solver.
+  const equation = solveLinearEquation(message);
+  if (equation) {
+    const conclusion = equation.kind === "unique"
+      ? "✅ **Solución: x = " + equation.solution + "**"
+      : equation.kind === "identity"
+        ? "✅ **Infinitas soluciones.**"
+        : "⚠️ **Esta ecuación no tiene solución.**";
     return {
-      text: `¡Vamos a resolverla paso a paso! 🧠\n\n${steps.join('\n')}\n\n✅ **Solución: x = ${solution}**\n\n💡 ¿Quieres probar otra?`,
-      metadata: { topic: 'math', vocabulary: vocab, corrections: [] }
+      text: "¡Vamos a resolverla paso a paso! 🧠\n\n"
+        + equation.steps.join("\n") + "\n\n" + conclusion
+        + "\n\n💡 ¿Quieres probar otra?",
+      metadata: {topic: "math", vocabulary: vocab, corrections: []},
     };
   }
-  
+
+
   return {
     text: `¡Vamos con matemáticas! 🧮\n\nDime una ecuación y te guío paso a paso. Por ejemplo:\n• "Resuelve 2x + 5 = 15"\n• "3x - 7 = 14"\n• "x + 10 = 25"\n\n💡 Vocabulario clave: **Ecuación** = Equação (PT) | Equació (CA) | Equation (EN)`,
     metadata: { topic: 'math', vocabulary: vocab, corrections: [] }
