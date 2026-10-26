@@ -2,13 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { SYSTEM_PROMPT, LANGUAGES, FALSE_FRIENDS, MATH_VOCABULARY, CATALAN_ADVANTAGES } from '@/data';
 import { parseChatPayload } from '@/lib/chat-payload.mjs';
 import { solveLinearEquation } from '@/lib/linear-equation.mjs';
+import {
+  InvalidRequestEncodingError,
+  RequestTooLargeError,
+  readBoundedRequestText,
+} from '@/lib/bounded-request.mjs';
 
 export async function POST(request: NextRequest) {
   try {
-    // Read a bounded payload; Content-Length alone cannot be trusted.
-    const raw = await request.text();
-    if (new TextEncoder().encode(raw).byteLength > 16384) {
-      return NextResponse.json({ error: 'Solicitud demasiado grande' }, { status: 413 });
+    // Enforce the byte limit while streaming; request.text() reads unbounded data.
+    let raw: string;
+    try {
+      raw = await readBoundedRequestText(request, 16384);
+    } catch (error) {
+      if (error instanceof RequestTooLargeError) {
+        return NextResponse.json({ error: error.message }, { status: 413 });
+      }
+      if (error instanceof InvalidRequestEncodingError) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+      throw error;
     }
     let payload: unknown;
     try {
