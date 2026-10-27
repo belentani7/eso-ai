@@ -9,13 +9,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'DANI - Tu Amigo de Estudio | William AI Tutor',
-  description: 'IA educativa personalizada para William: Español, Catalán, Inglés, Matemáticas, Cultura y Música',
+  title: 'DANI — Tutor de práctica multilingüe',
+  description: 'Recursos interactivos de español, catalán, inglés, matemáticas, cultura y música. Chat educativo guiado por reglas.',
   keywords: ['educación', 'IA', 'idiomas', 'matemáticas', 'adolescentes', 'migración'],
   authors: [{ name: 'Belentani Labs' }],
   openGraph: {
     title: 'DANI - Tu Amigo de Estudio',
-    description: 'IA educativa personalizada para William',
+    description: 'Práctica educativa multilingüe guiada por reglas',
     type: 'website',
   },
 };

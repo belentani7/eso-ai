@@ -12,7 +12,7 @@ export default function HomePage() {
     {
       icon: Brain,
       title: 'Aprendizaje Adaptativo',
-      description: 'IA que se adapta a tu nivel, detecta falsos amigos y usa tu portugués como puente para aprender más rápido.',
+      description: 'Prácticas guiadas por temas, falsos amigos y ejemplos de portugués como puente entre idiomas.',
       color: 'from-secondary-500 to-secondary-600',
     },
     {
@@ -44,7 +44,7 @@ export default function HomePage() {
   const stats = [
     { value: '4', label: 'Idiomas', icon: Globe },
     { value: '5', label: 'Juegos', icon: Gamepad2 },
-    { value: '50+', label: 'Lecciones', icon: BookOpen },
+    { value: '4', label: 'Áreas de estudio', icon: BookOpen },
     { value: '∞', label: 'Práctica', icon: Zap },
   ];
 
@@ -63,7 +63,7 @@ export default function HomePage() {
             <div className="hidden md:flex items-center gap-8">
               <Link href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Características</Link>
               <Link href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Cómo funciona</Link>
-              <Link href="#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Testimonios</Link>
+              <Link href="/dashboard/games" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Juegos</Link>
             </div>
             <div className="flex items-center gap-4">
               <Link href="/dashboard/chat" className="btn-primary">
@@ -84,7 +84,7 @@ export default function HomePage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
               </span>
-              <span className="text-sm font-semibold text-primary-700 dark:text-primary-300">Nueva versión 2.0 - Voz natural multilingüe</span>
+              <span className="text-sm font-semibold text-primary-700 dark:text-primary-300">Práctica multilingüe · funciones de voz según navegador</span>
             </div>
             
             <h1 className="text-5xl sm:text-7xl font-display font-bold tracking-tight mb-6 animate-slide-up">
@@ -92,7 +92,7 @@ export default function HomePage() {
             </h1>
             
             <p className="text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: '100ms' }}>
-              Diseñado para William: brasileño de 14 años en España. Aprende español, catalán, inglés, matemáticas, cultura y música con una IA que te entiende.
+              Tutor de práctica para estudiantes plurilingües: español, catalán, inglés, matemáticas, cultura y música. Respuestas guiadas por reglas y ejercicios interactivos.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up" style={{ animationDelay: '200ms' }}>
@@ -132,7 +132,7 @@ export default function HomePage() {
                   <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center animate-pulse-soft">
                     <Mic className="w-12 h-12 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">"Hola William, ¿en qué te ayudo hoy?"</h3>
+                  <h3 className="text-2xl font-bold mb-2">"Hola, ¿en qué te ayudo hoy?"</h3>
                   <p className="text-muted-foreground max-w-md mx-auto">
                     DANI te escucha, te responde con voz natural y te guía paso a paso en tu aprendizaje.
                   </p>
@@ -179,7 +179,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <div key={feature.title} className="card group animate-on-scroll" style={{ animationDelay: `${index * 100}ms` }}>
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br {feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
@@ -195,7 +195,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-display font-bold mb-4">Cómo funciona en <span className="gradient-text">3 pasos</span></h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Simple, efectivo y diseñado para que William avance a su ritmo.</p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Un espacio de aprendizaje que puedes explorar a tu ritmo.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -234,7 +234,7 @@ export default function HomePage() {
               { icon: Zap, title: 'Gamificación', topics: ['5 juegos educativos', 'Puntos y rachas', 'Logros desbloqueables', 'Progreso visual'], color: 'from-cyan-500 to-cyan-600' },
             ].map((subject, index) => (
               <div key={subject.title} className="card group animate-on-scroll" style={{ animationDelay: `${index * 50}ms` }}>
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br {subject.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${subject.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                   <subject.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-bold mb-3">{subject.title}</h3>
@@ -258,8 +258,8 @@ export default function HomePage() {
           <div className="card relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-500 opacity-5" />
             <div className="relative z-10">
-              <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">¿Listo para que William empiece hoy?</h2>
-              <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">Configura DANI en 5 minutos. Sin instalaciones complejas, funciona en el navegador. William solo necesita un micrófono y ganas de aprender.</p>
+              <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">¿Listo para empezar a aprender?</h2>
+              <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">Abre DANI en el navegador y descubre ejercicios, juegos y práctica multilingüe. Algunas funciones de voz necesitan permisos del navegador.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/dashboard/chat" className="btn-primary text-lg px-10 py-4 bg-white text-primary-600 hover:bg-primary-50 shadow-xl">
                   <Sparkles className="w-5 h-5 mr-2" />
@@ -270,7 +270,7 @@ export default function HomePage() {
                   Ver Juegos
                 </Link>
               </div>
-              <p className="mt-6 text-sm text-muted-foreground">No requiere tarjeta de crédito · Cancela cuando quieras · Datos en tu dispositivo</p>
+              <p className="mt-6 text-sm text-muted-foreground">Prototipo educativo · Sin pagos · Progreso del servidor de demostración</p>
             </div>
           </div>
         </div>
@@ -318,11 +318,11 @@ export default function HomePage() {
             </div>
           </div>
           <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>© 2024 Belentani Labs. Creado para William y todos los adolescentes que aprenden nuevos mundos.</p>
+            <p>© 2026 Belentani Labs. Recursos de estudio para jóvenes y personas plurilingües.</p>
             <div className="flex items-center gap-6">
-              <a href="#" className="hover:text-foreground transition-colors">Privacidad</a>
-              <a href="#" className="hover:text-foreground transition-colors">Términos</a>
-              <a href="#" className="hover:text-foreground transition-colors">Contacto</a>
+              <Link href="/privacy" className="hover:text-foreground transition-colors">Privacidad</Link>
+              <span>Versión de demostración</span>
+              <span>Sin cuentas de servidor</span>
             </div>
           </div>
         </div>

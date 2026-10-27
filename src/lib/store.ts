@@ -72,8 +72,8 @@ export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
       // Initial state
-      userName: 'William',
-      userAge: 14,
+      userName: '',
+      userAge: 0,
       nativeLanguage: 'pt',
       targetLanguages: ['es', 'ca', 'en'],
       progress: initialProgress,

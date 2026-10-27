@@ -6,6 +6,8 @@ export async function GET(request: NextRequest) {
     // For demo, we return mock progress data
     
     return NextResponse.json({
+      demo: true,
+      persisted: false,
       xp: 1250,
       level: 4,
       streak: 7,
@@ -49,7 +51,9 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({
       success: true,
-      message: 'Progreso actualizado',
+      demo: true,
+      persisted: false,
+      message: 'Actualización de demostración no persistida',
       updates: {
         xp: xp || 0,
         vocabularyLearned: vocabularyLearned || 0,

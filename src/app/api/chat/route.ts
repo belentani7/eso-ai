@@ -1,21 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SYSTEM_PROMPT, LANGUAGES, FALSE_FRIENDS, MATH_VOCABULARY, CATALAN_ADVANTAGES } from '@/data';
+import { parseChatPayload } from '@/lib/chat-payload.mjs';
+import { solveLinearEquation } from '@/lib/linear-equation.mjs';
+import {
+  InvalidRequestEncodingError,
+  RequestTooLargeError,
+  readBoundedRequestText,
+} from '@/lib/bounded-request.mjs';
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, language = 'es', history = [], userProfile } = await request.json();
-    
-    if (!message?.trim()) {
-      return NextResponse.json({ error: 'Mensaje vacío' }, { status: 400 });
+    // Enforce the byte limit while streaming; request.text() reads unbounded data.
+    let raw: string;
+    try {
+      raw = await readBoundedRequestText(request, 16384);
+    } catch (error) {
+      if (error instanceof RequestTooLargeError) {
+        return NextResponse.json({ error: error.message }, { status: 413 });
+      }
+      if (error instanceof InvalidRequestEncodingError) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+      throw error;
     }
-
-    // In production, this would call OpenAI/Claude API
-    // For now, we simulate an intelligent response
-    const response = generateAIResponse(message, language, history);
-    
-    return NextResponse.json(response);
-  } catch (error) {
-    console.error('Chat API error:', error);
+    let payload: unknown;
+    try {
+      payload = JSON.parse(raw);
+    } catch {
+      return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
+    }
+    let parsed;
+    try {
+      parsed = parseChatPayload(payload);
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Solicitud inválida' },
+        { status: 400 }
+      );
+    }
+    const response = generateAIResponse(parsed.message, parsed.language, parsed.history);
+    return NextResponse.json({ ...response, mode: 'guided-rules' }, {
+      headers: { 'Cache-Control': 'no-store' }
+    });
+  } catch {
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
@@ -25,7 +52,7 @@ function generateAIResponse(userMessage: string, language: string, history: any[
   const langInfo = LANGUAGES.find(l => l.code === language) || LANGUAGES[1];
   
   // Math detection
-  if (lower.includes('ecuación') || lower.includes('resuelve') || lower.match(/\d+x\s*[+-]/) || lower.includes('matemática') || lower.includes('mate')) {
+  if (lower.includes('ecuación') || lower.includes('resuelve') || lower.match(/\d+x\s*[+-]/) || /\bx\s*[+-]\s*\d+\s*=/.test(lower) || lower.includes('matemática') || lower.includes('mate')) {
     return generateMathResponse(userMessage, language);
   }
   
@@ -64,39 +91,23 @@ function generateMathResponse(message: string, language: string) {
     { concept: 'Incógnita', pt: 'Incógnita', es: 'Incógnita', ca: 'Incògnita', en: 'Unknown', category: 'Álgebra' },
   ];
   
-  // Check for specific equation
-  const eqMatch = message.match(/(\d*)\s*x\s*([+-])\s*(\d+)\s*=\s*(\d+)/);
-  if (eqMatch) {
-    const [, a, op, b, c] = eqMatch;
-    const aNum = a ? parseInt(a) : 1;
-    const bNum = parseInt(b);
-    const cNum = parseInt(c);
-    
-    let solution: number;
-    let steps: string[];
-    
-    if (op === '+') {
-      solution = (cNum - bNum) / aNum;
-      steps = [
-        `Tenemos ${aNum}x + ${bNum} = ${cNum}`,
-        `Paso 1: Restamos ${bNum} a ambos lados → ${aNum}x = ${cNum - bNum}`,
-        `Paso 2: Dividimos por ${aNum} → x = ${solution}`,
-      ];
-    } else {
-      solution = (cNum + bNum) / aNum;
-      steps = [
-        `Tenemos ${aNum}x - ${bNum} = ${cNum}`,
-        `Paso 1: Sumamos ${bNum} a ambos lados → ${aNum}x = ${cNum + bNum}`,
-        `Paso 2: Dividimos por ${aNum} → x = ${solution}`,
-      ];
-    }
-    
+  // Only explain equations supported by the bounded deterministic solver.
+  const equation = solveLinearEquation(message);
+  if (equation) {
+    const conclusion = equation.kind === "unique"
+      ? "✅ **Solución: x = " + equation.solution + "**"
+      : equation.kind === "identity"
+        ? "✅ **Infinitas soluciones.**"
+        : "⚠️ **Esta ecuación no tiene solución.**";
     return {
-      text: `¡Vamos a resolverla paso a paso! 🧠\n\n${steps.join('\n')}\n\n✅ **Solución: x = ${solution}**\n\n💡 ¿Quieres probar otra?`,
-      metadata: { topic: 'math', vocabulary: vocab, corrections: [] }
+      text: "¡Vamos a resolverla paso a paso! 🧠\n\n"
+        + equation.steps.join("\n") + "\n\n" + conclusion
+        + "\n\n💡 ¿Quieres probar otra?",
+      metadata: {topic: "math", vocabulary: vocab, corrections: []},
     };
   }
-  
+
+
   return {
     text: `¡Vamos con matemáticas! 🧮\n\nDime una ecuación y te guío paso a paso. Por ejemplo:\n• "Resuelve 2x + 5 = 15"\n• "3x - 7 = 14"\n• "x + 10 = 25"\n\n💡 Vocabulario clave: **Ecuación** = Equação (PT) | Equació (CA) | Equation (EN)`,
     metadata: { topic: 'math', vocabulary: vocab, corrections: [] }
@@ -162,10 +173,10 @@ function generateEnglishResponse(language: string) {
 
 function generateGreetingResponse(language: string) {
   const responses = {
-    es: `¡Hola William! 👋 ¿Qué tal? Soy DANI, tu amigo de estudio.\n\nHoy podemos:\n1️⃣ **Resolver ecuaciones** paso a paso (te guío, no te doy la respuesta)\n2️⃣ **Practicar catalán** (tu portugués ayuda mucho 🇧🇷→🏴)\n3️⃣ **Detectar falsos amigos** ⚠️ (evita situaciones embarazosas)\n4️⃣ **Repasar vocabulario** del insti (mates, ciencias, escolar)\n5️⃣ **Hablar de cultura** Brasil-España 🌉 (Tordesillas, familia real, fútbol, música)\n6️⃣ **Analizar canciones** en 4 idiomas 🎵\n\n¿Por dónde empezamos?`,
-    ca: `Hola William! 👋 Què tal? Sóc DANI, el teu amic d'estudi.\n\nAvui podem:\n1️⃣ **Resoldre equacions** pas a pas (te guio, no et dono la resposta)\n2️⃣ **Practicar català** (el teu portuguès ajuda molt 🇧🇷→🏴)\n3️⃣ **Detectar falsos amics** ⚠️ (evita situacions embarassoses)\n4️⃣ **Repassar vocabulari** de l'insti (mates, ciències, escolar)\n5️⃣ **Parlar de cultura** Brasil-Espanya 🌉\n6️⃣ **Analitzar cançons** en 4 idiomes 🎵\n\nPer on comencem?`,
-    en: `Hi William! 👋 How are you? I'm DANI, your study buddy.\n\nToday we can:\n1️⃣ **Solve equations** step by step (I guide, don't give answers)\n2️⃣ **Practice Catalan** (your Portuguese helps a lot 🇧🇷→🏴)\n3️⃣ **Spot false friends** ⚠️ (avoid embarrassing situations)\n4️⃣ **Review school vocab** (math, science, daily)\n5️⃣ **Talk culture** Brazil-Spain 🌉 (Tordesillas, royal family, football, music)\n6️⃣ **Analyze songs** in 4 languages 🎵\n\nWhere do we start?`,
-    pt: `Oi William! 👋 Tudo bem? Sou o DANI, seu amigo de estudo.\n\nHoje podemos:\n1️⃣ **Resolver equações** passo a passo (te guio, não dou a resposta)\n2️⃣ **Praticar catalão** (seu português ajuda muito 🇧🇷→🏴)\n3️⃣ **Detectar falsos amigos** ⚠️ (evita situações embaraçosas)\n4️⃣ **Revisar vocabulário** da escola (matemática, ciências, escolar)\n5️⃣ **Falar de cultura** Brasil-Espanha 🌉\n6️⃣ **Analisar músicas** em 4 idiomas 🎵\n\nPor onde começamos?`,
+    es: `¡Hola! 👋 ¿Qué tal? Soy DANI, tu amigo de estudio.\n\nHoy podemos:\n1️⃣ **Resolver ecuaciones** paso a paso (te guío, no te doy la respuesta)\n2️⃣ **Practicar catalán** (tu portugués ayuda mucho 🇧🇷→🏴)\n3️⃣ **Detectar falsos amigos** ⚠️ (evita situaciones embarazosas)\n4️⃣ **Repasar vocabulario** del insti (mates, ciencias, escolar)\n5️⃣ **Hablar de cultura** Brasil-España 🌉 (Tordesillas, familia real, fútbol, música)\n6️⃣ **Analizar canciones** en 4 idiomas 🎵\n\n¿Por dónde empezamos?`,
+    ca: `¡Hola! 👋 Què tal? Sóc DANI, el teu amic d'estudi.\n\nAvui podem:\n1️⃣ **Resoldre equacions** pas a pas (te guio, no et dono la resposta)\n2️⃣ **Practicar català** (el teu portuguès ajuda molt 🇧🇷→🏴)\n3️⃣ **Detectar falsos amics** ⚠️ (evita situacions embarassoses)\n4️⃣ **Repassar vocabulari** de l'insti (mates, ciències, escolar)\n5️⃣ **Parlar de cultura** Brasil-Espanya 🌉\n6️⃣ **Analitzar cançons** en 4 idiomes 🎵\n\nPer on comencem?`,
+    en: `Hi! 👋 How are you? I'm DANI, your study buddy.\n\nToday we can:\n1️⃣ **Solve equations** step by step (I guide, don't give answers)\n2️⃣ **Practice Catalan** (your Portuguese helps a lot 🇧🇷→🏴)\n3️⃣ **Spot false friends** ⚠️ (avoid embarrassing situations)\n4️⃣ **Review school vocab** (math, science, daily)\n5️⃣ **Talk culture** Brazil-Spain 🌉 (Tordesillas, royal family, football, music)\n6️⃣ **Analyze songs** in 4 languages 🎵\n\nWhere do we start?`,
+    pt: `Oi! 👋 Tudo bem? Sou o DANI, seu amigo de estudo.\n\nHoje podemos:\n1️⃣ **Resolver equações** passo a passo (te guio, não dou a resposta)\n2️⃣ **Praticar catalão** (seu português ajuda muito 🇧🇷→🏴)\n3️⃣ **Detectar falsos amigos** ⚠️ (evita situações embaraçosas)\n4️⃣ **Revisar vocabulário** da escola (matemática, ciências, escolar)\n5️⃣ **Falar de cultura** Brasil-Espanha 🌉\n6️⃣ **Analisar músicas** em 4 idiomas 🎵\n\nPor onde começamos?`,
   };
   
   return {

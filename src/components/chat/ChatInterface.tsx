@@ -34,8 +34,8 @@ export function ChatMessageDisplay({ message, onPlayAudio, onCopy }: ChatMessage
     >
       <Avatar
         size="md"
-        fallback={isUser ? 'W' : 'D'}
-        alt={isUser ? 'William' : 'DANI'}
+        fallback={isUser ? 'E' : 'D'}
+        alt={isUser ? 'Estudiante' : 'DANI'}
         className={cn('flex-shrink-0 mt-1', isUser ? 'bg-gradient-to-br from-blue-500 to-cyan-500' : 'bg-gradient-to-br from-primary-500 to-secondary-500')}
       />
       
@@ -246,7 +246,7 @@ export function ChatInterface({ onVocabularyLearned }: ChatInterfaceProps) {
     // Greeting
     if (lower.includes('hola') || lower.includes('oi') || lower.includes('hello') || lower.includes('buenos') || lower.includes('bon dia')) {
       return {
-        text: `¡Hola William! 👋 ¿Qué tal? Hoy podemos:\n\n1️⃣ Resolver ecuaciones paso a paso\n2️⃣ Practicar catalán (tu portugués ayuda mucho)\n3️⃣ Detectar falsos amigos ⚠️\n4️⃣ Repasar vocabulario del insti\n5️⃣ Hablar de cultura Brasil-España 🌉\n\n¿Por dónde empezamos?`,
+        text: `¡Hola! 👋 ¿Qué tal? Hoy podemos:\n\n1️⃣ Resolver ecuaciones paso a paso\n2️⃣ Practicar catalán (tu portugués ayuda mucho)\n3️⃣ Detectar falsos amigos ⚠️\n4️⃣ Repasar vocabulario del insti\n5️⃣ Hablar de cultura Brasil-España 🌉\n\n¿Por dónde empezamos?`,
         metadata: { topic: 'greeting' }
       };
     }
