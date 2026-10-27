@@ -31,3 +31,24 @@ test("math steps never contain NaN or Infinity", () => {
     assert.ok(!ans.steps.join(" ").includes("Infinity"));
   }
 });
+
+test("does not solve a fragment of a more complex equation", () => {
+  for (const expression of [
+    "2x + 5 = 15 + 3",
+    "2x + 5 = 15x",
+    "x + 1 = 2.5",
+    "x + 1 = 2 = 3",
+    "x + 1 = 2/3",
+    "x + 1 = 2^2",
+    "x + 1 = 2, y + 1 = 4",
+    "x + 1 = 2 - 1",
+  ]) {
+    assert.equal(solveLinearEquation(expression), null, expression);
+  }
+});
+
+test("accepts complete supported equations with a short instruction", () => {
+  assert.equal(solveLinearEquation("Resuelve 2x + 5 = 15").solution, 5);
+  assert.equal(solveLinearEquation("¿Puedes resolver x + 10 = 25?").solution, 15);
+  assert.equal(solveLinearEquation(" 3x - 7 = 14 ").solution, 7);
+});

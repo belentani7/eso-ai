@@ -5,7 +5,9 @@
  */
 export function solveLinearEquation(value) {
   if (typeof value !== "string" || value.length > 2000) return null;
-  const match = /(?:^|[^a-z0-9])(\d{0,9})\s*x\s*([+-])\s*(\d{1,9})\s*=\s*(\d{1,9})(?!\d)/i.exec(value);
+  // Match the complete equation, not a solvable-looking fragment of a larger one.
+  // A short text instruction may precede it, but not another arithmetic expression.
+  const match = /^\s*[^\d=+\-*\/^]*?(\d{0,9})\s*x\s*([+-])\s*(\d{1,9})\s*=\s*(\d{1,9})\s*[.!?¿¡]?\s*$/i.exec(value);
   if (!match) return null;
   const [, rawCoefficient, operation, rawOffset, rawRight] = match;
   const coefficient = rawCoefficient === "" ? 1 : Number(rawCoefficient);
